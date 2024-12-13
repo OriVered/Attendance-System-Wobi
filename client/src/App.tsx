@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";//Login page
 import Attendance from "./pages/Attendance";//Attendance page
+import Admin from "./pages/Admin";//Admin page
 import ProtectedRoute from "./components/ProtectedRoute";//ProtectedRoute Component
 import { TimeProvider } from "./context/TimeContext"; // TimeContext for global time
 import ClockLayout from "./components/ClockLayout"; // ClockLayout header element
@@ -28,6 +29,16 @@ const App: React.FC = () => {
                
                   <ClockLayout>
                     <Attendance />
+                  </ClockLayout>
+             
+              }
+            />
+                         <Route
+              path={APP_ROUTES.ADMIN}
+              element={
+               
+                  <ClockLayout>
+                    <Admin />
                   </ClockLayout>
              
               }
