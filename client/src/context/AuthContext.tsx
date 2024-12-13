@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { AuthState } from "../types/authTypes";
+
 /**
  * Context properties interface.
  */
@@ -9,15 +10,22 @@ interface AuthContextProps {
 }
 
 /**
- * Authentication Context.
+ * Context to manage authentication state across the application.
+ *
+ * Features:
+ * - Provides `auth` state containing the token, role, and username.
+ * - Allows updating the `auth` state via `setAuth`.
  */
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 /**
  * Provider for Authentication Context.
+ * - Manages authentication state for its children.
+ *
+ * @param {ReactNode} children - The child components to render within the provider.
  */
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [auth, setAuth] = useState<AuthState>({ token: null, role: null });
+  const [auth, setAuth] = useState<AuthState>({ token: null, role: null, username: null });
 
   return (
     <AuthContext.Provider value={{ auth, setAuth }}>
@@ -28,6 +36,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 /**
  * Hook to use Authentication Context.
+ * @throws {Error} if used outside of AuthProvider.
+ * @returns {AuthContextProps} The authentication state and updater function.
  */
 export const useAuth = (): AuthContextProps => {
   const context = useContext(AuthContext);
