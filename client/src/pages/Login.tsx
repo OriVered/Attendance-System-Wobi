@@ -6,6 +6,25 @@ import { login } from "../services/authService";
 import TEXTS from "../consts/texts";
 import APP_ROUTES from "../consts/appRoutes";
 
+/**
+ * Login Component:
+ * Provides a form for users to authenticate by entering their username and password.
+ *
+ * Features:
+ * - Validates credentials by sending a request to the backend.
+ * - Stores authentication token and user information using `AuthContext`.
+ * - Redirects users to appropriate routes based on their role (`admin` or `user`).
+ * - Displays error messages if login fails.
+ *
+ * Hooks:
+ * - `useAuth`: To access and set authentication state.
+ * - `useNavigate`: To programmatically navigate users after successful login.
+ *
+ * State:
+ * - `username`: Stores the entered username.
+ * - `password`: Stores the entered password.
+ * - `error`: Stores the error message if login fails.
+ */
 const Login: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -34,7 +53,6 @@ const Login: React.FC = () => {
       width="90%" 
       maxWidth="400px" 
       margin="auto"
-
     >
       <Typography variant="h4" gutterBottom>
         {TEXTS.LOGIN.TITLE}

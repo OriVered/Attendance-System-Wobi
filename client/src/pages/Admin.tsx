@@ -17,6 +17,26 @@ import { fetchAttendance, submitAttendance } from "../services/attendanceService
 import TEXTS from "../consts/texts";
 import { AttendanceRecord } from "../types/attendanceTypes";
 
+/**
+ * Admin Component:
+ * Provides a dashboard for administrators to manage attendance records.
+ *
+ * Features:
+ * - Fetches and displays attendance records for all users.
+ * - Allows editing of check-in and check-out times directly in the table.
+ * - Updates attendance records via API calls.
+ * - Displays loading, success, and error states.
+ *
+ * Hooks:
+ * - `useAuth`: To access the current user's authentication token.
+ * - `useEffect`: To fetch attendance records on component mount.
+ *
+ * State:
+ * - `attendanceRecords`: Stores the list of attendance records.
+ * - `loading`: Indicates whether attendance records are being fetched.
+ * - `error`: Stores error messages if fetching or updating fails.
+ * - `success`: Stores success messages upon successful updates.
+ */
 const Admin: React.FC = () => {
   const { auth } = useAuth();
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
