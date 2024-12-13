@@ -3,6 +3,20 @@ import { Box, Container, Typography } from "@mui/material";
 import { useTime } from "../context/TimeContext";
 import TEXTS from "../consts/texts";
 
+
+/**
+ * A layout component that displays the current time (or an error message) at the top
+ * and renders the child components below.
+ *
+ * Features:
+ * - Displays the current time fetched from the `TimeContext`.
+ * - Shows an error message if fetching the time fails.
+ * - Supports responsive design with Material-UI components.
+ *
+ * Props:
+ * @param {React.ReactNode} children - The child components to render within the layout.
+ */
+
 interface LayoutProps {
   children: React.ReactNode;
 }

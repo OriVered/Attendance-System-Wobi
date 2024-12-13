@@ -6,8 +6,23 @@ interface TimeContextProps {
   error: string | null; 
 }
 
+/**
+ * Context to provide the current time and error status throughout the application.
+ *
+ * Features:
+ * - Fetches the current time from an external service.
+ * - Automatically updates the time every 60 seconds.
+ * - Handles errors when time cannot be fetched.
+ */
 const TimeContext = createContext<TimeContextProps | undefined>(undefined);
 
+/**
+ * Provider for Time Context.
+ * - Fetches the current time on mount and updates it periodically.
+ * - Provides `currentTime` and `error` to its children.
+ *
+ * @param {ReactNode} children - The child components to render within the provider.
+ */
 export const TimeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentTime, setCurrentTime] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -16,18 +31,17 @@ export const TimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const updateTime = async () => {
       try {
         const time = await fetchCurrentTime();
-        setCurrentTime(new Date(time).toLocaleString("en-GB")); // Germany Format
+        setCurrentTime(new Date(time).toLocaleString("en-GB")); // Format for Germany
         setError(null); 
       } catch {
         setError("Unable to fetch the current time. Please check your internet connection.");
-        console.error("Failed to fetch current time.");
       }
     };
 
-    updateTime(); // Update immediately on mount
-    const intervalId = setInterval(updateTime, 60000); // Update every 60 seconds
+    updateTime();
+    const intervalId = setInterval(updateTime, 60000);
 
-    return () => clearInterval(intervalId); // Cleanup interval on unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -37,6 +51,11 @@ export const TimeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
+/**
+ * Hook to use Time Context.
+ * @throws {Error} if used outside of TimeProvider.
+ * @returns {TimeContextProps} The current time and error status.
+ */
 export const useTime = (): TimeContextProps => {
   const context = useContext(TimeContext);
   if (!context) {

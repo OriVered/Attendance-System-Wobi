@@ -1,6 +1,12 @@
 /**
- * Centralized user-facing texts.
+ * TEXTS object:
+ * A collection of static text values used throughout the application.
+ *
+ * Features:
+ * - Provides localized text for components like Login, Attendance, and Admin Dashboard.
+ * - Supports dynamic text interpolation for personalized messages.
  */
+
 export const TEXTS = {
   LOGIN: {
     TITLE: "Login",
@@ -11,11 +17,15 @@ export const TEXTS = {
   },
   ATTENDANCE: {
     TITLE: "Attendance",
-    CHECKIN_LABEL: "Check-in Time",
-    CHECKOUT_LABEL: "Check-out Time",
-    BUTTON_TEXT: "Submit",
-    SUCCESS_MESSAGE: "Attendance submitted successfully!",
-    ERROR_MESSAGE: "Failed to submit attendance. Please try again.",
+    CHECKIN_BUTTON: "Check In",
+    CHECKOUT_BUTTON: "Check Out",
+    SUCCESS_MESSAGE: "Attendance successfully recorded!",
+    ERROR_MESSAGE: "Failed to record attendance. Please try again.",
+    WELCOME_MESSAGE: "Welcome, {username}!",
+    SHIFT_STATUS: {
+      ON_SHIFT: "You have been on shift for {hours} hours.",
+      OFF_SHIFT: "Please check in to start your shift.",
+    },
   },
   ADMIN: {
     TITLE: "Admin Dashboard",
@@ -31,6 +41,5 @@ export const TEXTS = {
   },
 };
 
-export default TEXTS;
 
-  
+export default TEXTS;

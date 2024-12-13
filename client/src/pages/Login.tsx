@@ -16,7 +16,7 @@ const Login: React.FC = () => {
   const handleLogin = async () => {
     try {
       const { token, role } = await login(username, password);
-      setAuth({ token, role });
+      setAuth({ token, role, username });
       setError(null);
       navigate(role === "admin" ? APP_ROUTES.ADMIN : APP_ROUTES.ATTENDANCE);
     } catch {
