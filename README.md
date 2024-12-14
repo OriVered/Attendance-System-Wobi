@@ -134,7 +134,18 @@ The client will run on `http://localhost:3000`, and the server will run on `http
 - Access `http://localhost:3000/attendance` (user credentials required).
 - Check in or check out using the provided buttons.
 
-```
+
+
+## Screenshots
+
+### Admin Dashboard
+![Admin Dashboard](./assets/admin.png "Admin Dashboard")
+
+### Attendance Page
+![Attendance Page](./assets/attendance.png "Attendance Page")
+
+### Login Page
+![Login Page](./assets/login.png "Login Page")
 
 ## Future Features
 
