@@ -1,6 +1,7 @@
 export interface AttendanceData {
     checkIn?: string;
     checkOut?: string;
+    userName?: string | null;
   }
   
   export interface AttendanceRecord {

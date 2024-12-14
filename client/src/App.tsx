@@ -25,7 +25,7 @@ const App: React.FC = () => {
             />
              <Route
               path={APP_ROUTES.ATTENDANCE}
-              element={
+              element={ 
                
                 <ProtectedRoute allowedRoles={["user"]}>
                   <ClockLayout>

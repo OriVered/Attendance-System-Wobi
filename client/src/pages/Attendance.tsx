@@ -24,7 +24,7 @@ const Attendance: React.FC = () => {
   const handleCheckIn = async () => {
     if (!currentTime) return;
     try {
-      await submitAttendance({ checkIn: currentTime }, auth.token || "");
+      await submitAttendance({ userName: auth.username, checkIn: currentTime, checkOut: currentTime  }, auth.token || "");
       setIsCheckedIn(true);
       setCheckInTime(currentTime);
       setSuccess(TEXTS.ATTENDANCE.SUCCESS_MESSAGE);
@@ -33,17 +33,7 @@ const Attendance: React.FC = () => {
     }
   };
 
-  const handleCheckOut = async () => {
-    if (!currentTime) return;
-    try {
-      await submitAttendance({ checkOut: currentTime }, auth.token || "");
-      setIsCheckedIn(false);
-      setCheckInTime(null);
-      setSuccess(TEXTS.ATTENDANCE.SUCCESS_MESSAGE);
-    } catch {
-      setError(TEXTS.ATTENDANCE.ERROR_MESSAGE);
-    }
-  };
+
 
   const calculateShiftHours = () => {
     if (!checkInTime || !currentTime) return null;
@@ -73,7 +63,7 @@ const Attendance: React.FC = () => {
       <Button
         variant="contained"
         color={isCheckedIn ? "secondary" : "primary"}
-        onClick={isCheckedIn ? handleCheckOut : handleCheckIn}
+        onClick={ handleCheckIn}
         sx={{ mt: 2 }}
       >
         {isCheckedIn ? TEXTS.ATTENDANCE.CHECKOUT_BUTTON : TEXTS.ATTENDANCE.CHECKIN_BUTTON}

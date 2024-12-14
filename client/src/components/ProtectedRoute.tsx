@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { logout } from "../services/authService";
+import { Box, Button } from "@mui/material";
 
 /**
  * A route protection component that restricts access to certain routes
@@ -27,10 +28,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
 
   const handleLogout = async () => {
     try {
-      if (auth.token) { // Ensure the token is not null
-        logout(auth.token);
-  
-        // Clear the token from the context
+      if (auth.token) {
+        await logout(auth.token);
         setAuth({ token: null, role: null, username: null });
       } else {
         console.error("No token found for logout.");
@@ -39,20 +38,41 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
       console.error("Error during logout:", error);
     }
   };
+  
 
   if (!auth.token || !allowedRoles.includes(auth.role || "")) {
     return <Navigate to="/" />;
   }
 
   return (
-    <>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div>{children}</div>
-        <button onClick={handleLogout} style={{ margin: "10px", padding: "5px 10px" }}>
-          Logout
-        </button>
-      </div>
-    </>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="flex-start"
+
+      padding="16px"
+    >
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={handleLogout}
+   
+      >
+        Logout
+      </Button>
+      <Box
+        width="100%"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        flexGrow={1}
+      >
+        {children}
+      </Box>
+    </Box>
   );
 };
+
 export default ProtectedRoute;

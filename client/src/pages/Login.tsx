@@ -67,7 +67,7 @@ const Login: React.FC = () => {
       />
       <Button
         variant="contained"
-        color="primary"
+        color="secondary"
         onClick={handleLogin}
         sx={{ mt: 2 }}
         fullWidth
