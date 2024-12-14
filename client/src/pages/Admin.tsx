@@ -64,7 +64,7 @@ const Admin: React.FC = () => {
     const record = attendanceRecords[index];
     try {
       await submitAttendance(record, auth.token || ""); 
-      setSuccess(`Attendance updated for ${record.username}`);
+      setSuccess(`Attendance updated for ${record.userName}`);
       setError(null);
     } catch {
       setError("Failed to update attendance.");
@@ -98,7 +98,7 @@ const Admin: React.FC = () => {
         <TableBody>
           {attendanceRecords.map((record, index) => (
             <TableRow key={index}>
-              <TableCell>{record.username}</TableCell>
+              <TableCell>{record.userName}</TableCell>
               <TableCell>
                 <TextField
                   value={record.checkIn}

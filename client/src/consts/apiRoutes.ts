@@ -7,6 +7,7 @@ const API_BASE_URL = "http://localhost:5000/api";
 
 export const API_ROUTES = {
   LOGIN: `${API_BASE_URL}/auth/login`,
+  LOGOUT: `${API_BASE_URL}/auth/logout`,
   ATTENDANCE: `${API_BASE_URL}/attendance`,
 };
 

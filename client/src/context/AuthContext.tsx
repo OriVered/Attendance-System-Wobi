@@ -1,44 +1,48 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { AuthState } from "../types/authTypes";
 
-/**
- * Context properties interface.
- */
+
 interface AuthContextProps {
   auth: AuthState;
-  setAuth: React.Dispatch<React.SetStateAction<AuthState>>;
+  setAuth: (authState: AuthState) => void; // Custom setter
 }
 
-/**
- * Context to manage authentication state across the application.
- *
- * Features:
- * - Provides `auth` state containing the token, role, and username.
- * - Allows updating the `auth` state via `setAuth`.
- */
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-/**
- * Provider for Authentication Context.
- * - Manages authentication state for its children.
- *
- * @param {ReactNode} children - The child components to render within the provider.
- */
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [auth, setAuth] = useState<AuthState>({ token: null, role: null, username: null });
+  const [auth, setAuth] = useState<AuthState>(() => {
+    const savedAuth = localStorage.getItem("auth");
+    if (savedAuth) {
+      const parsedAuth = JSON.parse(savedAuth);
+
+      return {
+        token: parsedAuth.token,
+        role: parsedAuth.role,
+        username: parsedAuth.username,
+        id: parsedAuth.id,
+      };
+    }
+    return { token: null, role: null, username: null, id: null };
+  });
+
+  const updateAuth = (authState: AuthState) => {
+    if (authState.token) {
+      const updatedAuthState = authState
+      localStorage.setItem("auth", JSON.stringify(updatedAuthState));
+      setAuth(updatedAuthState);
+    } else {
+      localStorage.removeItem("auth");
+      setAuth({ token: null, role: null, username: null, id: null });
+    }
+  };
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthContext.Provider value={{ auth, setAuth: updateAuth }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-/**
- * Hook to use Authentication Context.
- * @throws {Error} if used outside of AuthProvider.
- * @returns {AuthContextProps} The authentication state and updater function.
- */
 export const useAuth = (): AuthContextProps => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -46,3 +50,4 @@ export const useAuth = (): AuthContextProps => {
   }
   return context;
 };
+ 

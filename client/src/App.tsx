@@ -27,9 +27,11 @@ const App: React.FC = () => {
               path={APP_ROUTES.ATTENDANCE}
               element={
                
+                <ProtectedRoute allowedRoles={["user"]}>
                   <ClockLayout>
                     <Attendance />
                   </ClockLayout>
+                </ProtectedRoute>
              
               }
             />
@@ -37,9 +39,11 @@ const App: React.FC = () => {
               path={APP_ROUTES.ADMIN}
               element={
                
+                <ProtectedRoute allowedRoles={["admin"]}>
                   <ClockLayout>
                     <Admin />
                   </ClockLayout>
+                </ProtectedRoute>
              
               }
             />
