@@ -45,3 +45,29 @@ export const fetchAttendance = async (token: string): Promise<AttendanceRecord[]
     throw new Error(TEXTS.ADMIN.ERROR_UPDATE);
   }
 };
+
+/**
+ * Fetches the current shift status for a user.
+ *
+ * Features:
+ * - Sends a GET request to retrieve the user's current shift status.
+ * - Requires an authentication token.
+ *
+ * @param {string} token - The user's authentication token.
+ * @returns {Promise<{ isCheckedIn: boolean; checkInTime: string | null }>} The current shift status.
+ */
+export const fetchShiftStatus = async (
+  token: string
+): Promise<{ isCheckedIn: boolean; checkInTime: string | null }> => {
+  try {
+    const response = await axios.get<{ isCheckedIn: boolean; checkInTime: string | null }>(
+      API_ROUTES.ATTENDANCE_STATUS,
+      {
+        headers: { ...HEADERS.JSON, Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(TEXTS.ATTENDANCE.ERROR_FETCH_STATUS);
+  }
+};

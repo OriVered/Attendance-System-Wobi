@@ -7,8 +7,8 @@
  * - `userName`: The name of the user submitting attendance (optional).
  */
 export interface AttendanceData {
-  checkIn?: string;
-  checkOut?: string;
+  checkIn?: string| null;
+  checkOut?: string| null;
   userName?: string | null;
 }
 

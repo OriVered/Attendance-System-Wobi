@@ -15,6 +15,7 @@ export const TEXTS = {
     PASSWORD_LABEL: "Password", // Input label for password
     BUTTON_TEXT: "Login", // Login button text
     ERROR_MESSAGE: "Invalid username or password. Please try again.", // Error message for failed login
+    LOADING_MESSAGE: "Authenticating, please wait...", // Message displayed during login process
   },
   LOGOUT: {
     TITLE: "Logout", // Logout page title or confirmation
@@ -29,15 +30,18 @@ export const TEXTS = {
   },
   ATTENDANCE: {
     TITLE: "Attendance", // Page title
-    CHECKIN_BUTTON: "Check In", // Check-in button text
-    CHECKOUT_BUTTON: "Check Out", // Check-out button text
+    CHECKIN_BUTTON: "Check In", // Text on the button to check in
+    CHECKOUT_BUTTON: "Check Out", // Text on the button to check out
     SUCCESS_MESSAGE: "Attendance successfully recorded!", // Success message for attendance submission
     ERROR_MESSAGE: "Failed to record attendance. Please try again.", // Error message for attendance submission failures
     WELCOME_MESSAGE: "Welcome, {username}!", // Welcome message with dynamic username
     SHIFT_STATUS: {
-      ON_SHIFT: "You have been on shift for {hours} hours.", // Dynamic message for on-shift duration
-      OFF_SHIFT: "Please check in to start your shift.", // Message when not checked in
+      ON_SHIFT: "You have been on shift for {duration}.",
+      OFF_SHIFT: "You are not currently on a shift.",
     },
+    FETCH_ERROR: "Failed to fetch attendance data. Please refresh and try again.", // Error when attendance data fails to load
+    ERROR_FETCH_STATUS: "Failed to fetch shift status. Please try again.", // Error for fetching shift status
+    ATTENDANCE_STATUS: "Fetching shift status, please wait...", // Status message when fetching attendance status
   },
   ADMIN: {
     TITLE: "Admin Dashboard", // Dashboard title
@@ -49,6 +53,7 @@ export const TEXTS = {
     },
     SUCCESS_UPDATE: "Attendance updated successfully.", // Success message for updates
     ERROR_UPDATE: "Failed to update attendance. Please try again.", // Error message for update failures
+    FETCH_ERROR: "Failed to load attendance records. Please try again later.", // Error when admin data fails to load
   },
   CLOCK_LAYOUT: {
     ERROR_MESSAGE: "Failed to fetch the current time.", // Error message for time-fetch failures
@@ -58,6 +63,7 @@ export const TEXTS = {
     ERROR_MESSAGE: "An unexpected error occurred. Please try again.", // Generic error message
     LOADING_MESSAGE: "Loading, please wait...", // Generic loading message
     WELCOME_MESSAGE: "Welcome to the application!", // General welcome message
+    CONNECTION_ERROR: "Unable to connect to the server. Please check your internet connection.", // Error for network issues
   },
 };
 

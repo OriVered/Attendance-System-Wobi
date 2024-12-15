@@ -1,5 +1,5 @@
 import express from "express";
-import { submitAttendance, fetchAttendance, fetchUserAttendance } from "../controllers/attendanceController";
+import { submitAttendance, fetchAttendance, fetchUserAttendance, getAttendanceStatus  } from "../controllers/attendanceController";
 
 const router = express.Router();
 
@@ -25,5 +25,8 @@ router.get("/", fetchAttendance);
 
 // Fetch attendance records for a specific user (admin-only)
 router.get("/user", fetchUserAttendance);
+
+// Fetch attendance status for a user
+router.get("/status", getAttendanceStatus); // New route for fetching shift status
 
 export default router;

@@ -11,6 +11,60 @@ import { AttendanceRecord } from "../models/attendanceModel";
 const SECRET_KEY = "abcd"; // Secret key for JWT signing and verification
 
 /**
+ * Fetches the current attendance status for the authenticated user.
+ *
+ * Features:
+ * - Verifies the user's JWT token.
+ * - Retrieves the user's current attendance record.
+ *
+ * @param {Request} req - The HTTP request object containing user details.
+ * @param {Response} res - The HTTP response object to send the status back.
+ * @returns {Promise<void>} - A promise that resolves when the request is complete.
+ */
+export const getAttendanceStatus = async (req: Request, res: Response): Promise<void> => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
+  jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+    if (err) {
+      res.status(403).json({ message: "Invalid token" });
+      return;
+    }
+
+    try {
+      const user = decoded as JwtPayload & { id: number };
+      const date = new Date().toISOString().split("T")[0];
+
+      const attendance = await getAttendanceByUserId(user.id, date);
+
+      if (!attendance) {
+        res.status(200).json({
+          isCheckedIn: false,
+          checkInTime: null,
+          message: "You are not currently in a shift.",
+        });
+        return;
+      }
+
+      const isCheckedIn = !!attendance.checkIn && !attendance.checkOut;
+
+      res.status(200).json({
+        isCheckedIn,
+        checkInTime: attendance.checkIn || null,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch attendance status." });
+    }
+  });
+};
+
+
+/**
  * Handles attendance submissions (check-in or check-out) for users.
  *
  * Features:

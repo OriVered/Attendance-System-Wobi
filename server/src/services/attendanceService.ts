@@ -60,6 +60,19 @@ export const getAttendanceRecords = (): AttendanceRecord[] => {
  * @returns {Promise<AttendanceRecord | null>} - The attendance record or `null` if none is found.
  */
 export const getAttendanceByUserId = async (userId: number, date?: string): Promise<AttendanceRecord | null> => {
-  const records = getAttendanceRecords();
-  return records.find(record => record.userId === userId && (!date || record.date === date)) || null;
+  try {
+    // Fetch all attendance records (assumes this function is asynchronous)
+    const records = await getAttendanceRecords();
+
+    // Filter the records for the specific user and date (if provided)
+    const record = records.find(
+      record => record.userId === userId && (!date || record.date === date)
+    );
+
+    return record || null; // Return the matching record or null if none is found
+  } catch (error) {
+    // Handle potential errors gracefully
+    console.error("Error fetching attendance records:", error);
+    throw new Error("Failed to fetch attendance records.");
+  }
 };

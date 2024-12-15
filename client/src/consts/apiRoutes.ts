@@ -9,6 +9,7 @@ export const API_ROUTES = {
   LOGIN: `${API_BASE_URL}/auth/login`,
   LOGOUT: `${API_BASE_URL}/auth/logout`,
   ATTENDANCE: `${API_BASE_URL}/attendance`,
+  ATTENDANCE_STATUS: `${API_BASE_URL}/attendance/status`, 
 };
 
 export default API_ROUTES;
