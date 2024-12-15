@@ -22,21 +22,21 @@ export const addAttendance = (record: AttendanceRecord): void => {
     // Create a new record if none exists
     const newId = data.attendance.length > 0 ? parseInt(data.attendance[data.attendance.length - 1].id) + 1 : 1;
     data.attendance.push({ ...record, id: newId.toString() });
-    saveData(data);
   } else {
-    // Update the existing record
+    // Update the existing record (only update provided fields)
     const existingRecord = data.attendance[existingRecordIndex];
 
-    if (record.checkIn) {
+    if (record.checkIn !== undefined) {
       existingRecord.checkIn = record.checkIn;
     }
-    if (record.checkOut) {
+    if (record.checkOut !== undefined) {
       existingRecord.checkOut = record.checkOut;
     }
-
-    saveData(data);
   }
+
+  saveData(data);
 };
+
 
 /**
  * Retrieves all attendance records.

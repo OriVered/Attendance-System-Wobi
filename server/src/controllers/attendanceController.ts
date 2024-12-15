@@ -48,9 +48,15 @@ export const submitAttendance = async (req: Request, res: Response): Promise<voi
         const existingRecord = await getAttendanceByUserId(user.id, date);
 
         if (existingRecord) {
-          // Update existing record
-          if (checkIn) existingRecord.checkIn = checkIn;
-          if (checkOut) existingRecord.checkOut = checkOut;
+          // If it's a user trying to submit a new check-in for an existing record, block it
+          if (!existingRecord.checkOut && checkIn && !checkOut) {
+            res.status(400).json({ message: "You have already checked in today." });
+            return;
+          }
+
+          // If it's an admin editing, update fields only as provided
+          if (checkIn !== undefined) existingRecord.checkIn = checkIn;
+          if (checkOut !== undefined) existingRecord.checkOut = checkOut;
 
           await addAttendance(existingRecord);
           res.json({ message: "Attendance updated", record: existingRecord });
@@ -79,6 +85,7 @@ export const submitAttendance = async (req: Request, res: Response): Promise<voi
     }
   });
 };
+
 
 /**
  * Fetches all attendance records (Admins only).
