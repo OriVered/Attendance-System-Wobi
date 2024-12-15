@@ -1,22 +1,32 @@
 import express from "express";
 import bodyParser from "body-parser";
-import authRoutes from "./routes/authRoutes";
 import cors from "cors";
-import attendanceRoutes from "./routes/attendanceRoutes";
+import authRoutes from "./routes/authRoutes"; // Routes for authentication (login, logout)
+import attendanceRoutes from "./routes/attendanceRoutes"; // Routes for attendance management
 
 const app = express();
 
+/**
+ * Express application setup and configuration.
+ *
+ * Features:
+ * - Configures middlewares for JSON parsing and Cross-Origin Resource Sharing (CORS).
+ * - Registers route handlers for authentication and attendance APIs.
+ */
+
+// Middleware: Parses JSON request bodies
 app.use(bodyParser.json());
 
+// Middleware: Enables Cross-Origin Resource Sharing
 app.use(cors());
 
-// Middlewares
+// Middleware: Built-in Express JSON parser
 app.use(express.json());
 
-// Routes
+// Route: Authentication API
 app.use("/api/auth", authRoutes);
+
+// Route: Attendance API
 app.use("/api/attendance", attendanceRoutes);
 
 export default app;
-
-

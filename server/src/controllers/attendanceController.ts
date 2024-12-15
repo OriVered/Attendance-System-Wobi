@@ -1,126 +1,162 @@
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
-import { addAttendance, getAttendanceRecords, getAttendanceByUserId } from "../services/attendanceService";
+import {
+  addAttendance,
+  getAttendanceRecords,
+  getAttendanceByUserId,
+} from "../services/attendanceService";
 import { AttendanceRecord } from "../models/attendanceModel";
 
-const SECRET_KEY = "abcd";
+const SECRET_KEY = "abcd"; // Secret key for JWT signing and verification
 
+/**
+ * Handles attendance submissions (check-in or check-out) for users.
+ *
+ * Features:
+ * - Verifies the user's JWT token.
+ * - Updates an existing attendance record or creates a new one.
+ * - Validates attendance data before processing.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ * @returns {Promise<void>} - A promise that resolves when the request is complete.
+ */
 export const submitAttendance = async (req: Request, res: Response): Promise<void> => {
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(" ")[1];
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
 
-    if (!token) {
-        res.status(401).json({ message: "Unauthorized" });
-        return;
+  if (!token) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
+  jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+    if (err) {
+      res.status(403).json({ message: "Invalid token" });
+      return;
     }
 
-    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
-        if (err) {
-            res.status(403).json({ message: "Invalid token" });
-            return;
-        }
+    const user = decoded as JwtPayload & { id: number };
+    const { userName, checkIn, checkOut } = req.body;
 
-        const user = decoded as JwtPayload & { id: number };
-        const { userName, checkIn, checkOut } = req.body;
+    if (checkIn || checkOut) {
+      const date = new Date().toISOString().split("T")[0]; // Current date in YYYY-MM-DD format
 
-        if (checkIn || checkOut) {
-            const date = new Date().toISOString().split("T")[0];
+      try {
+        // Check for an existing attendance record
+        const existingRecord = await getAttendanceByUserId(user.id, date);
 
-            try {
-                // Search for an existing attendance record for the same user and date
-                const existingRecord = await getAttendanceByUserId(user.id, date);
+        if (existingRecord) {
+          // Update existing record
+          if (checkIn) existingRecord.checkIn = checkIn;
+          if (checkOut) existingRecord.checkOut = checkOut;
 
-                if (existingRecord) {
-                    // Update the existing record
-                    if (checkIn) existingRecord.checkIn = checkIn;
-                    if (checkOut) existingRecord.checkOut = checkOut;
-
-                    await addAttendance(existingRecord); // Save updated record
-                    res.json({ message: "Attendance updated", record: existingRecord });
-                } else {
-                    // Create a new attendance record
-                    const newRecord: AttendanceRecord = {
-                        id: uuidv4(), // Temporary ID; real ID handling is in the service
-                        userId: user.id,
-                        userName: userName,
-                        checkIn: checkIn || undefined,
-                        checkOut: checkOut || undefined,
-                        date,
-                    };
-
-                    await addAttendance(newRecord); // Save new record
-                    res.json({ message: checkIn ? "Check-in recorded" : "Check-out recorded", record: newRecord });
-                }
-            } catch (error: any) {
-                res.status(400).json({ message: error.message });
-            }
+          await addAttendance(existingRecord);
+          res.json({ message: "Attendance updated", record: existingRecord });
         } else {
-            res.status(400).json({ message: "Invalid attendance data" });
+          // Create a new attendance record
+          const newRecord: AttendanceRecord = {
+            id: uuidv4(),
+            userId: user.id,
+            userName,
+            checkIn: checkIn || undefined,
+            checkOut: checkOut || undefined,
+            date,
+          };
+
+          await addAttendance(newRecord);
+          res.json({
+            message: checkIn ? "Check-in recorded" : "Check-out recorded",
+            record: newRecord,
+          });
         }
-    });
+      } catch (error: any) {
+        res.status(400).json({ message: error.message });
+      }
+    } else {
+      res.status(400).json({ message: "Invalid attendance data" });
+    }
+  });
 };
 
-
-
-
+/**
+ * Fetches all attendance records (Admins only).
+ *
+ * Features:
+ * - Verifies the admin's JWT token.
+ * - Retrieves all attendance records from the database.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ */
 export const fetchAttendance = (req: Request, res: Response): void => {
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(" ")[1];
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
 
-    if (!token) {
-        res.status(401).json({ message: "Unauthorized" });
-        return;
+  if (!token) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
+  jwt.verify(token, SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.status(403).json({ message: "Invalid token" });
+      return;
     }
 
-    jwt.verify(token, SECRET_KEY, (err, decoded) => {
-        if (err) {
-            res.status(403).json({ message: "Invalid token" });
-            return;
-        }
+    const user = decoded as JwtPayload & { role: string };
+    if (user.role !== "admin") {
+      res.status(403).json({ message: "Access denied. Admins only." });
+      return;
+    }
 
-        const user = decoded as JwtPayload & { role: string };
-        if (user.role !== "admin") {
-            res.status(403).json({ message: "Access denied. Admins only." });
-            return;
-        }
-
-        try {
-            const records = getAttendanceRecords();
-            res.json(records);
-        } catch (error: any) {
-            res.status(500).json({ message: error.message });
-        }
-    });
+    try {
+      const records = getAttendanceRecords();
+      res.json(records);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 };
 
+/**
+ * Fetches attendance records for a specific user (Admins only).
+ *
+ * Features:
+ * - Verifies the admin's JWT token.
+ * - Retrieves attendance records by user ID from the database.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ */
 export const fetchUserAttendance = (req: Request, res: Response): void => {
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(" ")[1];
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
 
-    if (!token) {
-        res.status(401).json({ message: "Unauthorized" });
-        return;
+  if (!token) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
+  jwt.verify(token, SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.status(403).json({ message: "Invalid token" });
+      return;
     }
 
-    jwt.verify(token, SECRET_KEY, (err, decoded) => {
-        if (err) {
-            res.status(403).json({ message: "Invalid token" });
-            return;
-        }
+    const user = decoded as JwtPayload & { id: number; role: string };
 
-        const user = decoded as JwtPayload & { id: number; role: string };
+    if (user.role !== "admin") {
+      res.status(403).json({ message: "Access denied. Admins only." });
+      return;
+    }
 
-        if (user.role !== "admin") {
-            res.status(403).json({ message: "Access denied. Admins only." });
-            return;
-        }
-
-        try {
-            const attendance = getAttendanceByUserId(user.id);
-            res.json(attendance);
-        } catch (error: any) {
-            res.status(500).json({ message: error.message });
-        }
-    });
+    try {
+      const attendance = getAttendanceByUserId(user.id);
+      res.json(attendance);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 };

@@ -2,22 +2,46 @@ import axios from "axios";
 import API_ROUTES from "../consts/apiRoutes";
 import { AttendanceData, AttendanceRecord } from "../types/attendanceTypes";
 import HEADERS from "../consts/headers";
+import TEXTS from "../consts/texts";
 
 /**
- * Submits attendance data (User only).
+ * Submits attendance data for a user.
+ *
+ * Features:
+ * - Sends a POST request to the server with the attendance data.
+ * - Requires an authentication token for authorization.
+ *
+ * @param {AttendanceData} data - The attendance data to submit (e.g., check-in and check-out times).
+ * @param {string} token - The user's authentication token.
+ * @returns {Promise<void>} A promise that resolves when the request is successful.
  */
 export const submitAttendance = async (data: AttendanceData, token: string): Promise<void> => {
-  await axios.post(API_ROUTES.ATTENDANCE, data, {
-    headers: { ...HEADERS.JSON, Authorization: `Bearer ${token}` },
-  });
+  try {
+    await axios.post(API_ROUTES.ATTENDANCE, data, {
+      headers: { ...HEADERS.JSON, Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    throw new Error(TEXTS.ATTENDANCE.ERROR_MESSAGE);
+  }
 };
 
 /**
- * Fetches attendance records (Admin only).
+ * Fetches attendance records for administrators.
+ *
+ * Features:
+ * - Sends a GET request to retrieve all attendance records.
+ * - Requires an authentication token with admin privileges.
+ *
+ * @param {string} token - The admin's authentication token.
+ * @returns {Promise<AttendanceRecord[]>} A promise that resolves to an array of attendance records.
  */
 export const fetchAttendance = async (token: string): Promise<AttendanceRecord[]> => {
-  const response = await axios.get<AttendanceRecord[]>(API_ROUTES.ATTENDANCE, {
-    headers: { ...HEADERS.JSON, Authorization: `Bearer ${token}` },
-  });
-  return response.data;
+  try {
+    const response = await axios.get<AttendanceRecord[]>(API_ROUTES.ATTENDANCE, {
+      headers: { ...HEADERS.JSON, Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(TEXTS.ADMIN.ERROR_UPDATE);
+  }
 };
