@@ -116,7 +116,7 @@ The client will run on `http://localhost:3000`, and the server will run on `http
 - `POST /api/attendance`: Submits check-in or check-out data.
 - `GET /api/attendance`: Fetches all attendance records (admin only).
 - `GET /api/attendance/user`: Fetches attendance records for the logged-in user.
-
+- `GET /api/attendance/status`: Fetche attendance current day status for a logged-in user.
 ## Usage
 
 ### Login
